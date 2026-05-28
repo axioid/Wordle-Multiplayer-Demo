@@ -10,7 +10,6 @@ public class GameLogics {
     }
 	
 	public String getCurrentMatchWord(int matchIndx) throws Exception{
-//		System.out.print(sessionWords[matchIndx]);
 		return sessionWords[matchIndx];	
 	}
 		
@@ -18,38 +17,37 @@ public class GameLogics {
 	    char[] guess = guessedWord.toUpperCase().toCharArray();
 	    char[] target = getCurrentMatchWord(match).toUpperCase().toCharArray();
 	    
-	    int[] letterState = new int[5]; // 0: Gray, 1: Yellow, 2: Green
+	    int[] letterState = new int[5];
 	    boolean[] targetUsed = new boolean[5]; 
 	    boolean[] guessUsed = new boolean[5];  
 
-	    // First pass: Check for Green (Correct letter, correct place)
+	    
 	    for (int i = 0; i < 5; i++) {
 	        if (guess[i] == target[i]) {
-	            letterState[i] = 2; // CHANGED to 2
+	            letterState[i] = 2;
 	            targetUsed[i] = true;
 	            guessUsed[i] = true;
 	        }
 	    }
 
-	    // Second pass: Check for Yellow (Correct letter, wrong place)
+	    
 	    for (int i = 0; i < 5; i++) {
 	        if (guessUsed[i]) continue; 
 
 	        for (int j = 0; j < 5; j++) {
 	            if (!targetUsed[j] && guess[i] == target[j]) {
-	                letterState[i] = 1; // CHANGED to 1
+	                letterState[i] = 1; 
 	                targetUsed[j] = true; 
 	                break; 
 	            }
 	        }
 	    }
 
-	    return letterState; // Gray defaults to 0 natively in Java arrays
+	    return letterState; 
 	}
 	
 	public void setAllMatchWords(String[] serverWords) {
 	    for (int i = 0; i < 5; i++) {
-	        // Change 'this.words' if your array is named something else!
 	        this.sessionWords[i] = serverWords[i]; 
 	    }
 	}
