@@ -11,7 +11,6 @@ public class GameServer {
     private static final int PORT = 12345;
     private static ArrayList<ClientHandler> clients = new ArrayList<>();
     
-    // Tie-breaker storage
     private static int p1Score = -1, p1Time = -1;
     private static int p2Score = -1, p2Time = -1;
 
@@ -27,7 +26,7 @@ public class GameServer {
                     client.start();
                     System.out.println("Player connected. Total: " + clients.size());
                     
-                    // Generate words and send them when player 2 joins
+
                     if (clients.size() == 2) {
                         System.out.println("Two players connected. Generating words...");
                         try {
@@ -38,14 +37,14 @@ public class GameServer {
                                                  serverGl.getCurrentMatchWord(3) + "," +
                                                  serverGl.getCurrentMatchWord(4);
                                                  
-                            // Sends: START:WORD1,WORD2,WORD3,WORD4,WORD5
+
                             broadcast("START:" + wordPayload); 
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
                 } else {
-                    socket.close(); // Reject if full
+                    socket.close();
                 }
                 
                 if (clients.isEmpty()) {
@@ -81,7 +80,7 @@ public class GameServer {
             p2Score = score; p2Time = time;
         }
 
-        // If both have submitted stats, calculate tie-breaker
+        
         if (p1Score != -1 && p2Score != -1) {
             if (p1Score > p2Score) {
                 clients.get(0).sendMessage("TIE_WIN");
@@ -90,7 +89,7 @@ public class GameServer {
                 clients.get(1).sendMessage("TIE_WIN");
                 clients.get(0).sendMessage("TIE_LOSE");
             } else {
-                // Scores tied. Compare time (higher time remaining = earlier guess)
+                
                 if (p1Time >= p2Time) {
                     clients.get(0).sendMessage("TIE_WIN");
                     clients.get(1).sendMessage("TIE_LOSE");
@@ -99,7 +98,7 @@ public class GameServer {
                     clients.get(0).sendMessage("TIE_LOSE");
                 }
             }
-            // Reset for next round
+            
             p1Score = -1; p1Time = -1;
             p2Score = -1; p2Time = -1;
         }
@@ -109,7 +108,7 @@ public class GameServer {
         clients.remove(client);
         System.out.println("Player disconnected. Total: " + clients.size());
         
-        // Reset tiebreaker states if someone leaves
+        
         p1Score = -1; p1Time = -1; p2Score = -1; p2Time = -1;
 
         if (!clients.isEmpty()) {
@@ -122,7 +121,6 @@ public class GameServer {
         private PrintWriter out;
         private BufferedReader in;
         
-        // --- NEW: Store the player's name so we can send it to late-joiners ---
         public String playerName = "Waiting..."; 
 
         public ClientHandler(Socket socket) {
@@ -145,13 +143,12 @@ public class GameServer {
                 String msg;
                 while ((msg = in.readLine()) != null) {
                     if (msg.startsWith("NAME:")) {
-                        // 1. Save this player's name
+                        
                         this.playerName = msg.substring(5);
                         
-                        // 2. Tell the opponent (if they exist) what this player's name is
                         relayToOpponent(this, "OPP_NAME:" + this.playerName);
                         
-                        // 3. --- FIX: If the opponent is already here, send their name to THIS player ---
+                        
                         for (ClientHandler c : clients) {
                             if (c != this && !c.playerName.equals("Waiting...")) {
                                 this.sendMessage("OPP_NAME:" + c.playerName);
@@ -172,7 +169,7 @@ public class GameServer {
                     }
                 }
             } catch (Exception e) {
-                // Connection lost silently handled
+                
             } finally {
                 removeClient(this);
                 try { socket.close(); } catch (Exception e) {}
