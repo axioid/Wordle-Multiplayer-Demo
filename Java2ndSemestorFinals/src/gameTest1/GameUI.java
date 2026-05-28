@@ -237,7 +237,7 @@ public class GameUI extends JFrame {
 	                    lblOppName.setForeground(Color.WHITE);
 	                }
 	                else if (msg.startsWith("START:")) { 
-	                    // --- CHANGED: Record gamesPlayed right when the match actually begins! ---
+	                  
 	                    try {
 	                        um.updateGamesPlayed(username);
 	                    } catch (Exception e) {
@@ -388,7 +388,7 @@ public class GameUI extends JFrame {
 	    if (roundSwingTimer != null) roundSwingTimer.stop();
 	    if (breakSwingTimer != null) breakSwingTimer.stop();
 	    
-	    // 1. Update Database Stats (Only update gamesWon here)
+	    
 	    try {
 	        if (isOverallWinner) {
 	            um.updateGamesWon(username);
@@ -397,14 +397,13 @@ public class GameUI extends JFrame {
 	        e.printStackTrace();
 	    }
 
-	    // 2. Show Winner/Loser Toast
+	    
 	    if (isOverallWinner) {
 	        showToast("MATCH COMPLETE! YOU WON! 🏆", 4000);
 	    } else {
 	        showToast("Match Complete. You lost.", 4000);
 	    }
 
-	    // 3. Return to Waiting Room after a delay
 	    javax.swing.Timer exitTimer = new javax.swing.Timer(4000, e -> {
 	        try { if (socket != null && !socket.isClosed()) socket.close(); } catch (Exception ex) { ex.printStackTrace(); }
 	        
