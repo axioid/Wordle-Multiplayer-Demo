@@ -122,6 +122,7 @@ public class GameUI extends JFrame {
 		// Right Bar setup
 		pRightBar = new JPanel(new GridBagLayout());
 		pRightBar.setPreferredSize(new Dimension(250,600));
+		pRightBar.setMinimumSize(new Dimension(250, 600));
 		pRightBar.setBackground(new Color(50, 50, 50));
 
 		lblTimer = new JLabel("Waiting for opponent...", SwingConstants.CENTER);
@@ -131,11 +132,13 @@ public class GameUI extends JFrame {
 		GridBagConstraints gbcRight = new GridBagConstraints();
 		gbcRight.gridx = 0;
 		gbcRight.gridy = 0;
+		gbcRight.anchor = GridBagConstraints.CENTER;
 		gbcRight.insets = new Insets(10, 0, 150, 0); 
 		pRightBar.add(lblTimer, gbcRight);
 		
 		JPanel scorePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
 		scorePanel.setBackground(new Color(50, 50, 50));
+		scorePanel.setMinimumSize(new Dimension(150, 25));
 		for (int i = 0; i < 5; i++) {
 			scoreCircles[i] = new ScoreCircle();
 			scorePanel.add(scoreCircles[i]);
