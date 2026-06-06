@@ -12,6 +12,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        new LobbyServer().start();
         Main m = new Main();
         new LoginUI(m);
     }
