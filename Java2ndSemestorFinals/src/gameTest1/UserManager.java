@@ -261,7 +261,6 @@ public class UserManager {
     
     public void setWordGuessed(String username, int number) {
     	int wordsGuessed = number;
-    	wordsGuessed++;
     	String stringWordsGuessed = String.valueOf(wordsGuessed);
     	
     	String sql = "UPDATE Users SET WordGuessed = ? WHERE Username = ?";
@@ -328,7 +327,6 @@ public class UserManager {
     
     public void setWordGuessedCorrectly(String username, int number) {
     	int wordsGuessedCorrectly = number;
-    	wordsGuessedCorrectly++;
     	String stringWordsGuessed = String.valueOf(wordsGuessedCorrectly);
     	
     	String sql = "UPDATE Users SET WordGuessedCorrectly = ? WHERE Username = ?";
@@ -392,7 +390,6 @@ public class UserManager {
     
     public void setGamesWon(String username, int number) {
     	int gamesWon = number;
-    	gamesWon++;
     	String strGamesWon = String.valueOf(gamesWon);
     	
     	String sql = "UPDATE Users SET GamesWon = ? WHERE Username = ?";
@@ -456,7 +453,6 @@ public class UserManager {
     
     public void setGamesPlayed(String username, int number) {
     	int gamesPlayed = number;
-    	gamesPlayed++;
     	String strGamesPlayed = String.valueOf(gamesPlayed);
     	
     	String sql = "UPDATE Users SET GamesPlayed = ? WHERE Username = ?";
