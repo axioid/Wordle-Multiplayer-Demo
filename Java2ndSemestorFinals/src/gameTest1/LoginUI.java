@@ -27,9 +27,8 @@ public class LoginUI extends JFrame {
 	
 	boolean isLoginMode = true;
 	
-	// --- CHANGED: The constructor now accepts the Main class instance ---
 	public LoginUI(Main mainApp) {
-		this.m = mainApp; // Store the Main instance
+		this.m = mainApp;
 		
 		this.setSize(390, 320);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -40,7 +39,6 @@ public class LoginUI extends JFrame {
 		
 		try {
 			um = new UserManager();
-			// REMOVED: m = new Main(); We don't want a new Main, we use the one passed in!
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -99,13 +97,12 @@ public class LoginUI extends JFrame {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
 		        if (isLoginMode) {
-		            // --- LOG IN MODE ---
 		            String username = tf1.getText();
 		            String password = tf2.getText();
 		            int isLogin = um.isValidLoginInfo(username, password);
 		            
 		            if (isLogin == 1) {
-		                m.start(username); // Tells the Main class to open the WaitingRoom
+		                m.start(username);
 		                LoginUI.this.dispose(); 
 		                
 		            } else if (isLogin == 0) {
@@ -116,7 +113,6 @@ public class LoginUI extends JFrame {
 		            }
 		            
 		        } else {
-		            // --- SIGN UP MODE ---
 		            String username = tf1.getText().trim();
 		            String password = tf2.getText();
 		            String displayName = tf3.getText().trim();
@@ -136,46 +132,38 @@ public class LoginUI extends JFrame {
 		    }
 		});
 		
-		// --- Add components to Row 1 (Username) ---
 		gbc.gridx = 0; gbc.gridy = 0;
 		p1.add(l1, gbc);
 		gbc.gridx = 1;
 		p1.add(tf1, gbc);
 		
-		// --- Add components to Row 2 (Password) ---
 		gbc.gridx = 0; gbc.gridy = 0;
 		p2.add(l2, gbc);
 		gbc.gridx = 1;
 		p2.add(tf2, gbc);
 		
-		// --- Add components to Row 3 (Display Name) ---
 		gbc.gridx = 0; gbc.gridy = 0;
 		p3.add(l3, gbc);
 		gbc.gridx = 1;
 		p3.add(tf3, gbc);
 		
-		// --- Add components to Row 4 (Buttons Stacked) ---
 		GridBagConstraints btnGbc = new GridBagConstraints();
 		btnGbc.gridx = 0; 
 		btnGbc.gridy = 0;
 		p4.add(btnMain, btnGbc);
 		
-		btnGbc.gridy = 1; // Put toggle button directly underneath
 		p4.add(btnToggle, btnGbc);
 		
-		// Add panels to the frame
 		this.add(p1);
 		this.add(p2);
 		this.add(p3);
 		this.add(p4);
 		
-		// Initialize the default state (Log in mode)
 		updateMode();
 		
 		this.setVisible(true);
 	}
 	
-	// Helper method to refresh the UI based on the mode
 	private void updateMode() {
 		if (isLoginMode) {
 			tf3.setEnabled(false);
