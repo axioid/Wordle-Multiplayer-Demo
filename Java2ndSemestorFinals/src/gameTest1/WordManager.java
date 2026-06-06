@@ -51,17 +51,5 @@ public class WordManager {
 		return letters;
 	}
 	
-//	public static void main(String[] args) throws Exception{
-//		WordManager wm = new WordManager();
-//		String[] word = new String[5];
-//		
-//		for(int i = 0; i<word.length; i++) {
-//			word[i] = wm.getWords()[i];
-//		}
-//		
-//		for(String s : word) {
-//			System.out.println(s);
-//		}
-//		
-//	}
+
 }
