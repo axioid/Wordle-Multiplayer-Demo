@@ -117,8 +117,11 @@ public class LoginUI extends JFrame {
 		            String password = tf2.getText();
 		            String displayName = tf3.getText().trim();
 		            
+		            if (!isValidSignUpInput(username, password, displayName)) {
+		                return;
+		            }
+		            
 		            if (um.isUsernameFree(username)) {
-
 		                um.addUser(username, password, displayName);
 		                JOptionPane.showMessageDialog(null, "Added user " + username, "Info", JOptionPane.INFORMATION_MESSAGE);
 		                isLoginMode = true; 
@@ -148,10 +151,12 @@ public class LoginUI extends JFrame {
 		p3.add(tf3, gbc);
 		
 		GridBagConstraints btnGbc = new GridBagConstraints();
-		btnGbc.gridx = 0; 
+		btnGbc.insets = new Insets(0, 10, 0, 10);
+		btnGbc.gridx = 0;
 		btnGbc.gridy = 0;
 		p4.add(btnMain, btnGbc);
 		
+		btnGbc.gridx = 1;
 		p4.add(btnToggle, btnGbc);
 		
 		this.add(p1);
@@ -175,5 +180,27 @@ public class LoginUI extends JFrame {
 			btnMain.setText("Sign up");
 			btnToggle.setText("Log in instead");
 		}
+	}
+
+	private boolean isValidSignUpInput(String username, String password, String displayName) {
+		if (username.isEmpty() || password.isEmpty() || displayName.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Please enter username, password, and display name.", "Warning", JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		if (!isAlphaNumeric(username)) {
+			JOptionPane.showMessageDialog(null, "Username may only contain letters and digits.", "Warning", JOptionPane.WARNING_MESSAGE);
+			tf1.setText("");
+			return false;
+		}
+		if (!isAlphaNumeric(password)) {
+			JOptionPane.showMessageDialog(null, "Password may only contain letters and digits.", "Warning", JOptionPane.WARNING_MESSAGE);
+			tf2.setText("");
+			return false;
+		}
+		return true;
+	}
+
+	private boolean isAlphaNumeric(String value) {
+		return value != null && value.matches("[A-Za-z0-9]+?");
 	}
 }
