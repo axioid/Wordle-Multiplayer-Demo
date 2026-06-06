@@ -47,7 +47,8 @@ public class GameUI extends JFrame {
 	
 	Main m;
 	String username;
-	int roundsWon = 0; 
+	int roundsWon = 0;
+	int roundsLost = 0;
 	
 	boolean canPlay = false; 
 	javax.swing.Timer roundSwingTimer; 
@@ -84,7 +85,6 @@ public class GameUI extends JFrame {
 			displayName = "Player";
 		}
 		
-		// Left Bar setup
 		pLeftBar = new JPanel(new GridBagLayout()); 
 		pLeftBar.setPreferredSize(new Dimension(500,600));
 		pLeftBar.setBackground(new Color(60, 60, 60));
@@ -119,7 +119,6 @@ public class GameUI extends JFrame {
 		pKeyboard = createKeyboardPanel();
 		pLeftBar.add(pKeyboard, gbcLeft);
 		
-		// Right Bar setup
 		pRightBar = new JPanel(new GridBagLayout());
 		pRightBar.setPreferredSize(new Dimension(250,600));
 		pRightBar.setMinimumSize(new Dimension(250, 600));
@@ -132,7 +131,7 @@ public class GameUI extends JFrame {
 		GridBagConstraints gbcRight = new GridBagConstraints();
 		gbcRight.gridx = 0;
 		gbcRight.gridy = 0;
-		gbcRight.anchor = GridBagConstraints.CENTER;
+		gbcRight.anchor = GridBagConstraints.CENTER; 
 		gbcRight.insets = new Insets(10, 0, 150, 0); 
 		pRightBar.add(lblTimer, gbcRight);
 		
@@ -221,13 +220,37 @@ public class GameUI extends JFrame {
 		setBoardGrayedOut(true);
 		connectToServer();
 	}
-	
+
+	private int requestRoomPort() throws Exception {
+	    try (Socket lobbySocket = new Socket("localhost", LobbyServer.LOBBY_PORT);
+	         PrintWriter lobbyOut = new PrintWriter(lobbySocket.getOutputStream(), true);
+	         BufferedReader lobbyIn = new BufferedReader(new InputStreamReader(lobbySocket.getInputStream()))) {
+	        lobbyOut.println("JOIN");
+	        String response = lobbyIn.readLine();
+	        if (response != null && response.startsWith("PORT:")) {
+	            return Integer.parseInt(response.substring(5));
+	        }
+	        throw new Exception("Invalid lobby response: " + response);
+	    }
+	}
+
 	private void connectToServer() {
 	    new Thread(() -> {
+	        int port;
 	        try {
-	            socket = new Socket("localhost", 12345);
+	            port = requestRoomPort();
+	        } catch (Exception e) {
+	            SwingUtilities.invokeLater(() -> lblTimer.setText("Unable to join lobby"));
+	            e.printStackTrace();
+	            return;
+	        }
+	
+	        try {
+	            socket = new Socket("localhost", port);
 	            out = new PrintWriter(socket.getOutputStream(), true);
 	            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+	            
+	            SwingUtilities.invokeLater(() -> lblTimer.setText("Waiting for opponent on port " + port));
 	            
 	            out.println("NAME:" + displayName); 
 	            
@@ -240,7 +263,6 @@ public class GameUI extends JFrame {
 	                    lblOppName.setForeground(Color.WHITE);
 	                }
 	                else if (msg.startsWith("START:")) { 
-	                  
 	                    try {
 	                        um.updateGamesPlayed(username);
 	                    } catch (Exception e) {
@@ -355,6 +377,8 @@ public class GameUI extends JFrame {
 	    
 	    if (won) {
 	        roundsWon++;
+	    } else {
+	        roundsLost++;
 	    }
 	    
 	    int delayBeforeBreak = won ? 2000 : 2500;
@@ -373,8 +397,8 @@ public class GameUI extends JFrame {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
 	            match++;
-	            if (match >= 5) {
-	                endGame(roundsWon >= 3);
+	            if (roundsWon >= 3 || roundsLost >= 3 || match >= 5) {
+	                endGame(roundsWon > roundsLost);
 	            } else {
 	                startPreRoundBreak();
 	            }
@@ -391,7 +415,6 @@ public class GameUI extends JFrame {
 	    if (roundSwingTimer != null) roundSwingTimer.stop();
 	    if (breakSwingTimer != null) breakSwingTimer.stop();
 	    
-	    
 	    try {
 	        if (isOverallWinner) {
 	            um.updateGamesWon(username);
@@ -400,7 +423,7 @@ public class GameUI extends JFrame {
 	        e.printStackTrace();
 	    }
 
-	    
+	    // 2. Show Winner/Loser Toast
 	    if (isOverallWinner) {
 	        showToast("MATCH COMPLETE! YOU WON! 🏆", 4000);
 	    } else {
