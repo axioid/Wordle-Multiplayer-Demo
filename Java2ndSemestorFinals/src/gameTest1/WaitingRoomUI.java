@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 public class WaitingRoomUI extends JFrame {
     
-    // Wordle-inspired Color Palette
     private final Color COLOR_BG = new Color(0x12, 0x12, 0x13);          
     private final Color COLOR_CARD = new Color(0x1A, 0x1A, 0x1B);        
     private final Color COLOR_BORDER = new Color(0x3A, 0x3A, 0x3C);      
